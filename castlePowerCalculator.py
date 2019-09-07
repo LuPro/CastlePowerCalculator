@@ -128,8 +128,8 @@ def editSettings(requestingID, command):
     if requestingID == 2065442:
         parameter = command[1]
 
-		if parameter == 'help':
-			bot.sendMessage(requestingID, "adduser \nrmuser \nshowuser \nlistusers \naddcustom \nrmcustom")
+        if parameter == 'help':
+            bot.sendMessage(requestingID, "adduser \nrmuser \nshowuser \nlistusers \naddcustom \nrmcustom")
 
         elif parameter == 'adduser':
             ID = int(command[2])
@@ -141,14 +141,14 @@ def editSettings(requestingID, command):
                 bot.sendMessage(requestingID, "User with this TG ID exists already!")
 
         elif parameter == 'rmuser':
-            ID = command[2]		#can be ID or nick
+            ID = command[2]        #can be ID or nick
             if rmUser(ID):
                 bot.sendMessage(requestingID, "User successfully deleted!")
             else:
                 bot.sendMessage(requestingID, "Couldn't find any user with that TG ID or nick!")
 
         elif parameter == 'showuser':
-            ID = command[2]		#can be ID or nick
+            ID = command[2]        #can be ID or nick
             showUser(ID, requestingID)
 
         elif parameter == 'listusers':
@@ -159,7 +159,7 @@ def editSettings(requestingID, command):
             bot.sendMessage(requestingID, output)
 
         elif parameter == 'addcustom':
-            ID = command[2]		#can be ID or nick
+            ID = command[2]        #can be ID or nick
             i = 3
             msg = ''
             while i < len(command):
@@ -168,7 +168,7 @@ def editSettings(requestingID, command):
             bot.sendMessage(requestingID, addCustomMessage(ID, msg))
 
         elif parameter == 'rmcustom':
-            ID = command[2]		#can be ID or nick
+            ID = command[2]        #can be ID or nick
             bot.sendMessage(requestingID, rmCustomMessage(ID))
 
     else:
@@ -219,8 +219,8 @@ def handle(msg):
             editSettings(chat_id, command.split())
 
         elif (command[0:5] == '/calc'):
-			if ((command[6:8] == '_atk' || command[6:8] == '_def') && msg['reply_to_message']['message_id']):
-				
+            if ((command[6:8] == '_atk' || command[6:8] == '_def') && msg['reply_to_message']['message_id']):
+                
             parameters = command.split()
 
             if len(parameters) < 4:
@@ -238,15 +238,15 @@ def handle(msg):
 
                 bot.sendMessage(chat_id, loadCustomMessage(chat_id).encode('utf-8'))
 
-                if chat_id == 280993442:	#rinka
+                if chat_id == 280993442:    #rinka
                     bot.sendMessage(chat_id, (u'\u0414\u043E\u0431\u0440\u044B\u0439 \u0434\u0435\u043D\u044C'.encode('utf-8') + ', Cat Queen! May your castle be strong and your Pina Colada tasty!'))
-                elif chat_id == 26667968:	#arctic
+                elif chat_id == 26667968:    #arctic
                     a = random.randint(0,1)
                     if a == 0:
                         bot.sendMessage(chat_id, 'hi do u rp')
                     elif a == 1:
                         bot.sendMessage(chat_id, 'y u block my fren')
-			
+            
     else:
         bot.sendMessage(chat_id, 'YOU HAVE NO POWER OVER ME')
 
