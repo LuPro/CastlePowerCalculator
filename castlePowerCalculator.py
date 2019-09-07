@@ -219,7 +219,7 @@ def handle(msg):
             editSettings(chat_id, command.split())
 
         elif (command[0:5] == '/calc'):
-            if ((command[6:8] == '_atk' || command[6:8] == '_def') && msg['reply_to_message']['message_id']):
+            if ((command[6:8] == '_atk' or command[6:8] == '_def') and msg['reply_to_message']['message_id']):
                 
             parameters = command.split()
 
