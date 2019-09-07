@@ -211,7 +211,6 @@ def parseReport(text, type, castleGold, chat_id):
     if statBeginPos != -1:
         stat = text[statBeginPos + len(searchString) : statEndPos]
         stat = int(stat)
-        bot.sendMessage(chat_id,  stat)
     else:
         bot.sendMessage(chat_id, "Error: Couldn't find any stats!")
         #further error handling so the bot doesn't crash later when trying to calc
@@ -233,7 +232,6 @@ def parseReport(text, type, castleGold, chat_id):
     if goldBeginPos != -1:
         gold = text[goldBeginPos + len(goldEmoji + "Gold: ") : goldEndPos]
         int(gold)
-        bot.sendMessage(chat_id, gold)
     else:
         bot.sendMessage(chat_id, "Error: Couldn't find gold!")
         #further error handling
@@ -294,13 +292,14 @@ def handle(msg):
                     if len(parameters) < 2:
                         bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
                     parseReport(msg['reply_to_message']['text'], 'atk', int(parameters[1]), chat_id)
+                    return
 
                 elif (command[5:9] == '_def' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
                         bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
                     parseReport(msg['reply_to_message']['text'], 'def', int(parameters[1]), chat_id)
-
-                return
+                    return
+                
             except KeyError:
                 bot.sendMessage(chat_id, "Error: You have to reply to a report for me to parse")
                 return
@@ -308,7 +307,6 @@ def handle(msg):
                 bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers")
                 return
                 
-
             if len(parameters) < 4:
                 bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> <RelevantStat> <Gold>")
 
