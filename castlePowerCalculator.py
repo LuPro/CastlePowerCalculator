@@ -2,9 +2,15 @@ import time
 import random
 import datetime
 import telepot
+import emojis
 from telepot.loop import MessageLoop
 
 SEPERATOR = ' -|- '
+
+atkEmoji = u'\U00002694'
+defEmoji = u'\U0001F6E1'
+goldEmoji = u'\U0001F4B0'
+variationSelector = u'\uFE0F'
 
 def isAllowed(requestingID):
     for user in allowedUsers:
@@ -174,6 +180,68 @@ def editSettings(requestingID, command):
     else:
         bot.sendMessage(requestingID, "I'm sorry Dave, I'm afraid I can't do that.")
 
+def parseReport(text, type, castleGold, chat_id):
+    text = text.replace(variationSelector, '', 20)
+
+    searchString = ""
+    if type == 'atk':
+        searchString = atkEmoji + ':'
+    elif type == 'def':
+        searchString = defEmoji + ':'
+    else:
+        searchString = atkEmoji + ':'
+        #add some sort of error handling here that's not just settings "search for attack" as default (not super needed as this is only internal data passing)
+
+    print text.encode('unicode-escape').decode('ascii')
+
+    statBeginPos = text.find(searchString)
+    statEndPos = 0
+    paranthesesPos = text.find('(', statBeginPos)
+    whitespacePos = text.find(' ', statBeginPos)
+
+    if paranthesesPos < whitespacePos and paranthesesPos != - 1:
+        statEndPos = paranthesesPos
+    else:
+        statEndPos = whitespacePos
+
+    if paranthesesPos == -1 and whitespacePos == -1:
+        bot.sendMessage(chat_id, "Error: Punctuation/Spaces are missing, can't discern values from text")
+        #return
+
+    if statBeginPos != -1:
+        stat = text[statBeginPos + len(searchString) : statEndPos]
+        stat = int(stat)
+        bot.sendMessage(chat_id,  stat)
+    else:
+        bot.sendMessage(chat_id, "Error: Couldn't find any stats!")
+        #further error handling so the bot doesn't crash later when trying to calc
+        #return
+
+    goldBeginPos = text.find(goldEmoji + "Gold: ")
+    goldEndPos = 0
+    newLinePos = text.find('\n', goldBeginPos + len(goldEmoji + "Gold: "))
+    whitespacePos = text.find(' ', goldBeginPos + len(goldEmoji + "Gold: "))
+
+    if newLinePos < whitespacePos and newLinePos != - 1:
+        goldEndPos = newLinePos
+    else:
+        goldEndPos = whitespacePos
+    
+    if newLinePos == -1 and whitespacePos == -1:
+        goldEndPos = len(text)
+
+    if goldBeginPos != -1:
+        gold = text[goldBeginPos + len(goldEmoji + "Gold: ") : goldEndPos]
+        int(gold)
+        bot.sendMessage(chat_id, gold)
+    else:
+        bot.sendMessage(chat_id, "Error: Couldn't find gold!")
+        #further error handling
+        return
+
+    bot.sendMessage(chat_id, calculate([0, castleGold, stat, gold]))
+    return 
+
 def calculate(parameters):
     stat = 0
     gold = 0
@@ -188,7 +256,7 @@ def calculate(parameters):
     gold = int(parameters[3])
 
     if gold <= 0:
-        return 'Error: Invalid value for Gold entered, Gold cannot be 0 or lower'
+        return 'Error: Invalid value for Gold, Gold cannot be 0 or lower'
 
     else:
         minCastlePower = (stat * castleGold) / (gold + 1)
@@ -219,9 +287,27 @@ def handle(msg):
             editSettings(chat_id, command.split())
 
         elif (command[0:5] == '/calc'):
-            if ((command[6:8] == '_atk' or command[6:8] == '_def') and msg['reply_to_message']['message_id']):
-                
             parameters = command.split()
+
+            try: 
+                if (command[5:9] == '_atk' and msg['reply_to_message']['message_id']):
+                    if len(parameters) < 2:
+                        bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
+                    parseReport(msg['reply_to_message']['text'], 'atk', int(parameters[1]), chat_id)
+
+                elif (command[5:9] == '_def' and msg['reply_to_message']['message_id']):
+                    if len(parameters) < 2:
+                        bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
+                    parseReport(msg['reply_to_message']['text'], 'def', int(parameters[1]), chat_id)
+
+                return
+            except KeyError:
+                bot.sendMessage(chat_id, "Error: You have to reply to a report for me to parse")
+                return
+            except ValueError:
+                bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers")
+                return
+                
 
             if len(parameters) < 4:
                 bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> <RelevantStat> <Gold>")
