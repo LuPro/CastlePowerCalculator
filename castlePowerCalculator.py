@@ -237,7 +237,7 @@ def parseReport(text, type, castleGold, chat_id):
         #further error handling
         return
 
-    bot.sendMessage(chat_id, calculate([0, castleGold, stat, gold]))
+    bot.sendMessage(chat_id, calculate([0, castleGold, stat, gold]), parse_mode="html")
     return 
 
 def calculate(parameters):
@@ -263,7 +263,7 @@ def calculate(parameters):
         minGoldRatio = gold / float(stat)
         maxGoldRatio = (gold + 1) / float(stat)
 
-        return 'Entered:\nCastle Total: %d\nStat: %d\nGold: %d\n\nCalculated:\nTotal Atk/Def: %d - %d\nGold per stat: %.3f - %.3f' % (castleGold, stat, gold, minCastlePower, maxCastlePower, minGoldRatio, maxGoldRatio)        
+        return '<b>Entered:</b>\nCastle Total: %d\nStat: %d\nGold: %d\n\n<b>Calculated:</b>\nTotal Atk/Def: %d - %d\nGold per stat: %.3f - %.3f' % (castleGold, stat, gold, minCastlePower, maxCastlePower, minGoldRatio, maxGoldRatio)        
 
 def handle(msg):
     chat_id = msg['chat']['id']
@@ -315,7 +315,7 @@ def handle(msg):
                     bot.sendMessage(chat_id, "Warning: Too many parameters defined, ignoring excess values")
 
                 try:
-                    bot.sendMessage(chat_id, calculate(parameters))
+                    bot.sendMessage(chat_id, calculate(parameters), parse_mode="html")
 
                 except ValueError:
                     bot.sendMessage(chat_id, "Error: Entered incorrect values (Did you enter text instead of numbers?)")
@@ -332,7 +332,7 @@ def handle(msg):
                         bot.sendMessage(chat_id, 'y u block my fren')
             
     else:
-        bot.sendMessage(chat_id, 'YOU HAVE NO POWER OVER ME')
+        bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
 
 bot = telepot.Bot(loadToken())
 allowedUsers = loadUsers()
