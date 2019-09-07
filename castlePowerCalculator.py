@@ -128,7 +128,10 @@ def editSettings(requestingID, command):
     if requestingID == 2065442:
         parameter = command[1]
 
-        if parameter == 'adduser':
+		if parameter == 'help':
+			bot.sendMessage(requestingID, "adduser \nrmuser \nshowuser \nlistusers \naddcustom \nrmcustom")
+
+        elif parameter == 'adduser':
             ID = int(command[2])
             nick = command[3]
             if findUser(ID) == -1:
@@ -216,6 +219,8 @@ def handle(msg):
             editSettings(chat_id, command.split())
 
         elif (command[0:5] == '/calc'):
+			if ((command[6:8] == '_atk' || command[6:8] == '_def') && msg['reply_to_message']['message_id']):
+				
             parameters = command.split()
 
             if len(parameters) < 4:
@@ -241,6 +246,7 @@ def handle(msg):
                         bot.sendMessage(chat_id, 'hi do u rp')
                     elif a == 1:
                         bot.sendMessage(chat_id, 'y u block my fren')
+			
     else:
         bot.sendMessage(chat_id, 'YOU HAVE NO POWER OVER ME')
 
