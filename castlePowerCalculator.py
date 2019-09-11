@@ -198,15 +198,19 @@ def parseReport(text, type, castleGold, chat_id):
     statEndPos = 0
     paranthesesPos = text.find('(', statBeginPos)
     whitespacePos = text.find(' ', statBeginPos)
+    newLinePos = text.find('\n', statBeginPos)
+
+    if newLinePos < whitespacePos and newLinePos != -1:
+        whitespacePos = newLinePos
 
     if paranthesesPos < whitespacePos and paranthesesPos != - 1:
         statEndPos = paranthesesPos
     else:
         statEndPos = whitespacePos
 
-    if paranthesesPos == -1 and whitespacePos == -1:
+    if paranthesesPos == -1 and whitespacePos == -1 and newLinePos == -1:
         bot.sendMessage(chat_id, "Error: Punctuation/Spaces are missing, can't discern values from text")
-        #return
+        return
 
     if statBeginPos != -1:
         stat = text[statBeginPos + len(searchString) : statEndPos]
@@ -214,7 +218,7 @@ def parseReport(text, type, castleGold, chat_id):
     else:
         bot.sendMessage(chat_id, "Error: Couldn't find any stats!")
         #further error handling so the bot doesn't crash later when trying to calc
-        #return
+        return
 
     goldBeginPos = text.find(goldEmoji + "Gold: ")
     goldEndPos = 0
@@ -272,7 +276,7 @@ def handle(msg):
     nick = ""
     if findUser(chat_id) != -1:
         nick = " (" + allowedUsers[findUser(chat_id)][0][1] + ")"
-    print 'Received command from %d%s: %s' % (chat_id, nick, command)
+    print ('Received command from %d%s: %s' % (chat_id, nick, command)).encode('unicode-escape').decode('ascii')
 
     if (isAllowed(chat_id)):
         if (command == '/start'):
@@ -291,20 +295,29 @@ def handle(msg):
                 if (command[5:9] == '_atk' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
                         bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
-                    parseReport(msg['reply_to_message']['text'], 'atk', int(parameters[1]), chat_id)
+                    try:
+                        castleGold = int(parameters[1])
+                    except ValueError:
+                        bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers")
+                        return
+
+                    parseReport(msg['reply_to_message']['text'], 'atk', castleGold, chat_id)
                     return
 
                 elif (command[5:9] == '_def' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
                         bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
-                    parseReport(msg['reply_to_message']['text'], 'def', int(parameters[1]), chat_id)
+                    try:
+                        castleGold = int(parameters[1])
+                    except ValueError:
+                        bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers")
+                        return
+
+                    parseReport(msg['reply_to_message']['text'], 'def', castleGold, chat_id)
                     return
                 
             except KeyError:
                 bot.sendMessage(chat_id, "Error: You have to reply to a report for me to parse")
-                return
-            except ValueError:
-                bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers")
                 return
                 
             if len(parameters) < 4:
