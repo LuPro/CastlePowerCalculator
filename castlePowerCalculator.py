@@ -6,19 +6,10 @@ import emojis
 from telepot.loop import MessageLoop
 import dbHandler
 
-SEPERATOR = ' -|- '
-
 atkEmoji = u'\U00002694'
 defEmoji = u'\U0001F6E1'
 goldEmoji = u'\U0001F4B0'
 variationSelector = u'\uFE0F'
-
-def isAllowed(requestingID):
-    for user in allowedUsers:
-        if user[0][0] == requestingID:
-            return 1
-
-    return 0
 
 def loadToken():
     tokenFile = open('token', 'r')
@@ -26,146 +17,29 @@ def loadToken():
     tokenFile.close()
     return token.rstrip()
 
-def loadUsers():
-    userFile = open('users', 'r')
-    user = [[1234567890, 'Nick'], 'custom message']
-    users = [user]
-
-    fileData = userFile.read()
-
-    lines = fileData.splitlines()
-
-    for line in lines:
-        data = line.split(SEPERATOR)
-        user = [ [ int(data[0]), data[1] ], data[2] ]
-        users.append(user)
-
-    del users[0]
-    userFile.close()
-    return users
-
-def addUser(ID, nick):
-    user = [ [ID, nick], '####' ]
-    allowedUsers.append(user)
-    updateUsersFile()
-
-def rmUser(ID):
-    listID = findUser(ID)
-    if listID != -1:
-        del allowedUsers[listID]
-        updateUsersFile()
-        return 1
-    else:
-        return 0
-
-
-def findUser(identifier):
-    i = 0
-    try:
-        while i < len(allowedUsers):
-            if allowedUsers[i][0][0] == int(identifier):
-                return i
-            i += 1
-
-    except ValueError:
-        while i < len(allowedUsers):
-            if allowedUsers[i][0][1].lower() == identifier.lower():
-                return i
-            i += 1
-
-    return -1
-
-
-def showUser(ID, requestingID):
-    listID = findUser(ID)
-    if listID != -1:
-        bot.sendMessage(requestingID, "TG ID: %d\nNick: %s\nCustom message: %s" % (allowedUsers[listID][0][0], allowedUsers[listID][0][1], allowedUsers[listID][1].encode('utf-8')) )
-    else:
-        bot.sendMessage(requestingID, "Couldn't find any user with that TG ID or nick!")
-
-def updateUsersFile():
-    userFile = open('users', 'r')
-    backup = userFile.read()
-    userFile.close()
-
-    backupFile = open('users_backup', 'w')
-    backupFile.write(backup)
-    backupFile.close()
-
-
-    userFile = open('users', 'w')
-    for user in allowedUsers:
-        userFile.write("%d%s%s%s%s\n" % (user[0][0], SEPERATOR, user[0][1], SEPERATOR, user[1]))
-
-    userFile.close()
-
-def addCustomMessage(ID, msg):
-    listID = findUser(ID)
-    if listID != -1:
-        output = "Successfully added custom message!"
-        if allowedUsers[listID][1] != '####':
-            output += " Old message was: " + allowedUsers[listID][1]
-
-        allowedUsers[listID][1] = msg
-        updateUsersFile()
-        return output
-
-def rmCustomMessage(ID): 
-    listID = findUser(ID)
-    if listID != -1:
-        output = "Successfully deleted custom message!"
-        if allowedUsers[listID][1] != '####':
-            output += " Old message was: " + allowedUsers[listID][1]
-
-        allowedUsers[listID][1] = '####'
-        updateUsersFile()
-        return output
-
-    return "Couldn't find any user with that TG ID or nick!"
-
-def loadCustomMessage(ID):
-    listID = findUser(ID)
-    if listID != -1:
-        if allowedUsers[listID][1] != '####':
-            return allowedUsers[listID][1]
-    else:
-        return ''
-
 def editSettings(requestingID, command):
-    if requestingID == 2065442:
+    if db.isAdmin(requestingID):
         parameter = command[1]
 
         if parameter == 'help':
-            bot.sendMessage(requestingID, "adduser \nrmuser \nshowuser \nlistusers \naddcustom \nrmcustom")
+            bot.sendMessage(requestingID, "adduser \nrmuser \nshowuser \nlistusers \naddcustom \nrmcustom \nsetsql \nloadsql")
 
         elif parameter == 'adduser':
             ID = int(command[2])
             nick = command[3]
             bot.sendMessage(requestingID, db.addUser(ID, nick))
-            if findUser(ID) == -1:
-                addUser(ID, nick)
-                bot.sendMessage(requestingID, "User successfully added!")
-            else:
-                bot.sendMessage(requestingID, "User with this TG ID exists already!")
 
         elif parameter == 'rmuser':
             ID = command[2]        #can be ID or nick
-            if rmUser(ID):
-                bot.sendMessage(requestingID, "User successfully deleted!")
-            else:
-                bot.sendMessage(requestingID, "Couldn't find any user with that TG ID or nick!")
+            bot.sendMessage(requestingID, db.rmUser(ID))
 
         elif parameter == 'showuser':
             ID = command[2]        #can be ID or nick
-            showUser(ID, requestingID)
+            bot.sendMessage(requestingID, db.showUser(ID), parse_mode="html")
 
         elif parameter == 'listusers':
             output = ''
-            bot.sendMessage(requestingID, db.showUsers())
-            for user in allowedUsers:
-                output += "%d, %s\n" % (user[0][0], user[0][1])
-
-            bot.sendMessage(requestingID, output)
+            bot.sendMessage(requestingID, db.showUser(), parse_mode="html")
 
         elif parameter == 'addcustom':
             ID = command[2]        #can be ID or nick
@@ -174,11 +48,24 @@ def editSettings(requestingID, command):
             while i < len(command):
                 msg += command[i] + " "
                 i += 1
-            bot.sendMessage(requestingID, addCustomMessage(ID, msg))
+
+            bot.sendMessage(requestingID, db.updateData(ID, ["msg"], [msg]), parse_mode = "html")
 
         elif parameter == 'rmcustom':
             ID = command[2]        #can be ID or nick
-            bot.sendMessage(requestingID, rmCustomMessage(ID))
+            bot.sendMessage(requestingID, db.updateData(ID, ["msg"], ["None"]), parse_mode = "html")
+
+        elif parameter == 'setsql':
+            ID = command[2]
+            param = command[3]
+            value = command[4]
+            db.updateData(ID, [param], [value])
+            bot.sendMessage(requestingID, "Updated database values!")
+        
+        elif parameter == 'loadsql':
+            ID = command[2]
+            param = command[3]
+            bot.sendMessage(requestingID, db.loadData(ID, [param]))
 
     else:
         bot.sendMessage(requestingID, "I'm sorry Dave, I'm afraid I can't do that.")
@@ -276,12 +163,14 @@ def handle(msg):
     chat_id = msg['chat']['id']
     command = msg['text']
 
-    nick = ""
-    if findUser(chat_id) != -1:
-        nick = " (" + allowedUsers[findUser(chat_id)][0][1] + ")"
-    print ('Received command from %d%s: %s' % (chat_id, nick, command)).encode('unicode-escape').decode('ascii')
+    db.open("calcBot.db")
 
-    if (isAllowed(chat_id)):
+    nick = db.loadData(chat_id, ["nick"])
+    print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], msg['chat']['username'], command)).encode('unicode-escape').decode('ascii')
+
+    if (db.findUser(chat_id).empty):
+        bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
+    else:
         if (command == '/start'):
             bot.sendMessage(chat_id, 'Type /help to find out more')
 
@@ -336,7 +225,7 @@ def handle(msg):
                 except ValueError:
                     bot.sendMessage(chat_id, "Error: Entered incorrect values (Did you enter text instead of numbers?)")
 
-                bot.sendMessage(chat_id, loadCustomMessage(chat_id).encode('utf-8'))
+                bot.sendMessage(chat_id, db.loadData(chat_id, ["msg"]).encode('utf-8'))
 
                 if chat_id == 280993442:    #rinka
                     bot.sendMessage(chat_id, (u'\u0414\u043E\u0431\u0440\u044B\u0439 \u0434\u0435\u043D\u044C'.encode('utf-8') + ', Cat Queen! May your castle be strong and your Pina Colada tasty!'))
@@ -346,9 +235,8 @@ def handle(msg):
                         bot.sendMessage(chat_id, 'hi do u rp')
                     elif a == 1:
                         bot.sendMessage(chat_id, 'y u block my fren')
-            
-    else:
-        bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
+    db.close()
+
 
 bot = telepot.Bot(loadToken())
 db = dbHandler.DataBaseHandler()

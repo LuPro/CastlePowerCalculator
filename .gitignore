@@ -3,4 +3,4 @@ users
 users_backup
 nohup.out
 *.pyc
-users.db
+calcBot.db
