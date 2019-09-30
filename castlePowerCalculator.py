@@ -4,6 +4,7 @@ import datetime
 import telepot
 import emojis
 from telepot.loop import MessageLoop
+import dbHandler
 
 SEPERATOR = ' -|- '
 
@@ -140,6 +141,7 @@ def editSettings(requestingID, command):
         elif parameter == 'adduser':
             ID = int(command[2])
             nick = command[3]
+            bot.sendMessage(requestingID, db.addUser(ID, nick))
             if findUser(ID) == -1:
                 addUser(ID, nick)
                 bot.sendMessage(requestingID, "User successfully added!")
@@ -159,6 +161,7 @@ def editSettings(requestingID, command):
 
         elif parameter == 'listusers':
             output = ''
+            bot.sendMessage(requestingID, db.showUsers())
             for user in allowedUsers:
                 output += "%d, %s\n" % (user[0][0], user[0][1])
 
@@ -348,6 +351,8 @@ def handle(msg):
         bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
 
 bot = telepot.Bot(loadToken())
+db = dbHandler.DataBaseHandler()
+
 allowedUsers = loadUsers()
 
 MessageLoop(bot, handle).run_as_thread()
