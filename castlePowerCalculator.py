@@ -4,7 +4,9 @@ import datetime
 import telepot
 import emojis
 from telepot.loop import MessageLoop
+
 import dbHandler
+import castleReportParser
 
 atkEmoji = u'\U00002694'
 defEmoji = u'\U0001F6E1'
@@ -49,17 +51,17 @@ def editSettings(requestingID, command):
                 msg += command[i] + " "
                 i += 1
 
-            bot.sendMessage(requestingID, db.updateData(ID, ["msg"], [msg]), parse_mode = "html")
+            bot.sendMessage(requestingID, db.updateUserData(ID, ["msg"], [msg]), parse_mode = "html")
 
         elif parameter == 'rmcustom':
             ID = command[2]        #can be ID or nick
-            bot.sendMessage(requestingID, db.updateData(ID, ["msg"], ["None"]), parse_mode = "html")
+            bot.sendMessage(requestingID, db.updateUserData(ID, ["msg"], ["None"]), parse_mode = "html")
 
         elif parameter == 'setsql':
             ID = command[2]
             param = command[3]
             value = command[4]
-            db.updateData(ID, [param], [value])
+            db.updateUserData(ID, [param], [value])
             bot.sendMessage(requestingID, "Updated database values!")
         
         elif parameter == 'loadsql':
@@ -82,7 +84,7 @@ def parseReport(text, type, castleGold, chat_id):
         searchString = atkEmoji + ':'
         #add some sort of error handling here that's not just settings "search for attack" as default (not super needed as this is only internal data passing)
 
-    print text.encode('unicode-escape').decode('ascii')
+    #print text.encode('unicode-escape').decode('ascii')
 
     statBeginPos = text.find(searchString)
     statEndPos = 0
@@ -165,6 +167,12 @@ def handle(msg):
 
     db.open("calcBot.db")
 
+    if castleParser.validate(msg, db):
+        print (db.loadCastles())
+        bot.sendMessage(chat_id, castleParser.parseReport(msg, db))
+    else: 
+        print "Not validated"
+
     nick = db.loadData(chat_id, ["nick"])
     print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], msg['chat']['username'], command)).encode('unicode-escape').decode('ascii')
 
@@ -240,8 +248,7 @@ def handle(msg):
 
 bot = telepot.Bot(loadToken())
 db = dbHandler.DataBaseHandler()
-
-allowedUsers = loadUsers()
+castleParser = castleReportParser.CastleReportParser()
 
 MessageLoop(bot, handle).run_as_thread()
 print 'I am listening ...'

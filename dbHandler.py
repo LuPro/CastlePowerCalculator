@@ -4,7 +4,7 @@ import pandas
 #to-do: this entire file will need error handling
 
 class DataBaseHandler:
-    def updateData(self, identifier, params, values):  #params and values have to be same length
+    def updateUserData(self, identifier, params, values):  #params and values have to be same length
         if (self.findUser(identifier).empty):
             return "Couldn't find any user with that TG ID or nick!"
 
@@ -123,6 +123,26 @@ class DataBaseHandler:
             return output
 
         return "Error: Can't show user, identifier is of unexpected type"
+
+    def loadMetaData(self, param):
+        self.dbCursor.execute("SELECT %s FROM metadata;" % (param))
+        return self.dbCursor.fetchall()[0][0]
+
+    def loadCastles(self):
+        self.dbCursor.execute("SELECT castle FROM report;")
+        tupleResults = self.dbCursor.fetchall()
+        results = []
+        for result in tupleResults:
+            results.append(result[0])
+        return results
+
+    def updateCastleData(self, castle, result, closeness, gold, points):
+        self.dbCursor.execute("UPDATE report SET battleResult = %d, battleCloseness = %d, gold = %d, points = %d WHERE castle = \"%s\"" % (result, closeness, gold, points, castle))
+        self.db.commit()
+
+    def updateReportTimeStamp(self, time):
+        self.dbCursor.execute("UPDATE metadata SET dateReport = %d;" % (time))
+        self.db.commit()
 
     def open(self, name):
         self.db = sqlite3.connect(name)
