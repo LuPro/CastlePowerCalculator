@@ -14,17 +14,11 @@ CREATE TABLE report (castle TEXT, battleResult INT, battleCloseness INT, gold IN
 Then create entries for all castles (in the order they are in the cwreports channel report):
 
 INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Highnest", 0, 0, 0, 0, "None");
-
 INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Wolfpack", 0, 0, 0, 0, "None");
-
 INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Deerhorn", 0, 0, 0, 0, "None");
-
 INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Sharkteeth", 0, 0, 0, 0, "None");
-
 INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Dragonscale", 0, 0, 0, 0, "None");
-
 INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Moonlight", 0, 0, 0, 0, "None");
-
 INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Potato", 0, 0, 0, 0, "None");
 
 * metadata 
