@@ -140,6 +140,10 @@ class DataBaseHandler:
         self.dbCursor.execute("UPDATE report SET battleResult = %d, battleCloseness = %d, gold = %d, points = %d WHERE castle = \"%s\"" % (result, closeness, gold, points, castle))
         self.db.commit()
 
+    def loadCastleData(self, castle, param):
+        self.dbCursor.execute("SELECT %s from report WHERE castle = \"%s\";" % (param, castle))
+        return self.dbCursor.fetchall()[0]
+
     def updateReportTimeStamp(self, time):
         self.dbCursor.execute("UPDATE metadata SET dateReport = %d;" % (time))
         self.db.commit()

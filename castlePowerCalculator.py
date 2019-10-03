@@ -72,6 +72,22 @@ def editSettings(requestingID, command):
     else:
         bot.sendMessage(requestingID, "I'm sorry Dave, I'm afraid I can't do that.")
 
+def isCastle(string):
+    castles = db.loadCastles()
+
+    for castle in castles:
+        if castle == string:
+            return castle;
+        else:
+            aliases = db.loadCastleData(castle, "aliases")[0]
+            aliases = aliases.split()
+            for alias in aliases:
+                if alias == string:
+                    return castle
+
+    return ""
+            
+
 def parseReport(text, type, castleGold, chat_id):
     text = text.replace(variationSelector, '', 20)
 
@@ -168,10 +184,7 @@ def handle(msg):
     db.open("calcBot.db")
 
     if castleParser.validate(msg, db):
-        print (db.loadCastles())
         bot.sendMessage(chat_id, castleParser.parseReport(msg, db))
-    else: 
-        print "Not validated"
 
     nick = db.loadData(chat_id, ["nick"])
     print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], msg['chat']['username'], command)).encode('unicode-escape').decode('ascii')
@@ -190,28 +203,41 @@ def handle(msg):
 
         elif (command[0:5] == '/calc'):
             parameters = command.split()
+            castleGold = 0
 
             try: 
                 if (command[5:9] == '_atk' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
-                        bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
+                        bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> or <CastleName>")
+                    
                     try:
                         castleGold = int(parameters[1])
-                    except ValueError:
-                        bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers")
-                        return
+                    except:
+                        if isinstance(parameters[1], basestring):
+                            castleName = isCastle(parameters[1])
+                            if castleName != "":
+                                castleGold = int(db.loadCastleData(castleName, "gold")[0])
+                            else:
+                                bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers or valid aliases for castle names")
+                                return
 
                     parseReport(msg['reply_to_message']['text'], 'atk', castleGold, chat_id)
                     return
 
                 elif (command[5:9] == '_def' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
-                        bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold>")
+                        bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> or <CastleName>")
+
                     try:
                         castleGold = int(parameters[1])
-                    except ValueError:
-                        bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers")
-                        return
+                    except:
+                        if isinstance(parameters[1], basestring):
+                            castleName = isCastle(parameters[1])
+                            if castleName != "":
+                                castleGold = int(db.loadCastleData(castleName, "gold")[0])
+                            else:
+                                bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers or valid aliases for castle names")
+                                return
 
                     parseReport(msg['reply_to_message']['text'], 'def', castleGold, chat_id)
                     return
