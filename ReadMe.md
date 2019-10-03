@@ -1,4 +1,4 @@
-* Set up
+# Set up
 
 Create a new sqlite3 database with the name "calcBot.db"
 Then create 3 tables: users, report and metadata
@@ -31,6 +31,6 @@ CREATE TABLE metadata (dateReport INT, cwReportID INT);
 Then enter the data, first should be set to 0 (unix time stamp), the second is the ID of the cw reports channel (can be adjusted to grab from other channels/cw3 channel) - parser is not guaranteed to work with other channels though (it will most likely not work)
 INSERT INTO metadata (dateReport, cwReportID) VALUES (0, -1001108112459);
 
-* Misc
+# Misc
 
 In the code at the end of the handle function there's some custom code for custom messages for special people - those custom messages don't work with the generic code, but you won't need them yourself so you can just delete them.
