@@ -76,11 +76,12 @@ def editSettings(requestingID, command):
 def isCastle(string):
     castles = db.loadList("castle", "report")
 
+    string = string.lower()
     for castle in castles:
-        if castle == string:
+        if castle.lower() == string:
             return castle;
         else:
-            aliases = db.loadCastleData(castle, "aliases")[0]
+            aliases = db.loadCastleData(castle, "aliases")[0].lower()
             aliases = aliases.split()
             for alias in aliases:
                 if alias == string:
@@ -105,11 +106,9 @@ def generateCastleReport():
 
         if db.loadCastleData(castle, "battleResult")[0] == 1:
             castleTuple = (castle, points * 5)
-            print castleTuple
             adjustedScores.append(copy.deepcopy(castleTuple))
         else:
             castleTuple = (castle, points)
-            print castleTuple
             adjustedScores.append(copy.deepcopy(castleTuple))
         
     scores.sort(key = sortPoints, reverse = True)
@@ -241,6 +240,7 @@ def handle(msg):
     if (db.findUser(chat_id).empty):
         bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
     else:
+        command = command.lower()
         if (command == '/start'):
             bot.sendMessage(chat_id, 'Type /help to find out more')
 
@@ -263,6 +263,9 @@ def handle(msg):
                 bot.sendMessage(chat_id, "Successfully unsubscribed from castle point reports")
             else:
                 bot.sendMessage(chat_id, "You are not subscribed to castle point reports")
+
+        elif command[0:7] == '/report':
+            bot.sendMessage(chat_id, generateCastleReport(), parse_mode="html")
 
         elif (command[0:5] == '/calc'):
             parameters = command.split()
