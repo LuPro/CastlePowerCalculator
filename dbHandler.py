@@ -89,6 +89,29 @@ class DataBaseHandler:
         self.db.commit()
         return "User successfully deleted!"
 
+    def changeAdmin(self, identifier, value):
+        if (self.findUser(identifier).empty):
+            return "Couldn't find any user with that TG ID or nick!"
+        else:
+            if type(identifier) is int or type(identifier) is long:
+                self.dbCursor.execute("UPDATE users SET admin = %d WHERE ID = %d;" % (value, identifier))
+            elif isinstance(identifier, basestring):
+                self.dbCursor.execute("UPDATE users SET admin = %d WHERE nick = \"%s\";" % (value, identifier))
+            self.db.commit()
+            return "Admin privileges successfully changed!"
+
+    def rmUser(self, identifier):
+        if (self.findUser(identifier).empty):
+            return "Couldn't find any user with that TG ID or nick!"
+
+        if type(identifier) is int or type(identifier) is long:
+            self.dbCursor.execute("DELETE FROM users WHERE ID = %d;" % (identifier))
+        elif isinstance(identifier, basestring):
+            self.dbCursor.execute("DELETE FROM users WHERE nick = \"%s\";" % (identifier))
+
+        self.db.commit()
+        return "User successfully deleted!"
+
     def isAdmin(self, ID):
         results = self.dbCursor.execute("SELECT ID FROM users WHERE admin = 1;")    #is a list of tuples, has to be accessed with [0] later
         for result in results:

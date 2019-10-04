@@ -9,6 +9,16 @@ from telepot.loop import MessageLoop
 import dbHandler
 import castleReportParser
 
+#BOT COMMANDS FOR TG BOTFATHER
+#help - Short usage info
+#calc - Calculate power
+#calc_atk - Calc atk from report
+#calc_def - Calc def from report
+#settings - Internal settings
+#sub - Subscribe to CW point report
+#unsub - Unsub from CW point report
+#report - Manual trigger for report
+
 atkEmoji = u'\U00002694'
 defEmoji = u'\U0001F6E1'
 goldEmoji = u'\U0001F4B0'
@@ -25,7 +35,7 @@ def editSettings(requestingID, command):
         parameter = command[1]
 
         if parameter == 'help':
-            bot.sendMessage(requestingID, "adduser \nrmuser \nshowuser \nlistusers \naddcustom \nrmcustom \nsetsql \nloadsql")
+            bot.sendMessage(requestingID, "adduser <ID> <nick>\nrmuser <ID or nick>\naddadmin <ID or nick>\nrmadmin <ID or nick>\nshowuser <ID or nick>\nlistusers \naddcustom <ID or nick> <custom message>\nrmcustom <ID or nick>\nsetsql <ID or nick> <SQL Parameter> <value>\nloadsql <ID or nick> <SQL Parameter>")
 
         elif parameter == 'adduser':
             ID = int(command[2])
@@ -35,6 +45,14 @@ def editSettings(requestingID, command):
         elif parameter == 'rmuser':
             ID = command[2]        #can be ID or nick
             bot.sendMessage(requestingID, db.rmUser(ID))
+
+        elif parameter == 'addadmin':
+            ID = command[2]
+            bot.sendMessage(requestingID, db.changeAdmin(ID, 1))
+
+        elif parameter == 'rmadmin':
+            ID = command[2]
+            bot.sendMessage(requestingID, db.changeAdmin(ID, 0))
 
         elif parameter == 'showuser':
             ID = command[2]        #can be ID or nick
@@ -250,7 +268,7 @@ def handle(msg):
             bot.sendMessage(chat_id, 'Type /help to find out more')
 
         elif (lowerCmd[0:5] == '/help'):
-            bot.sendMessage(chat_id, 'To calculate send /calc <CastleGold> <RelevantStat> <Gold>')
+            bot.sendMessage(chat_id, "To calculate send <b>/calc $CastleGold $RelevantStat $Gold</b>\nOR reply to a report with <b>/calc_atk</b> or <b>/calc_def $CastleGold</b>\nAlternatively to entering castle gold you can enter a castle name (or a valid alias) to use that castles' gold for calculations.\n<i>(Only works if this battles' report has been submitted already)</i>\n\n/sub to subscribe (and /unsub to unsubscribe) from automatic castle point report, /report to get a report sent manually.", parse_mode="html")
 
         elif lowerCmd[0:9] == '/settings':
             editSettings(chat_id, command.split())
