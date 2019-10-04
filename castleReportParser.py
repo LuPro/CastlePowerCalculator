@@ -4,7 +4,7 @@ class CastleReportParser:
     def parseReport(self, msg, db):
         text = msg["text"]
 
-        castles = db.loadCastles()
+        castles = db.loadList("castle", "report")
 
         castleEndPos = 0
         castleGoldPos = 0
@@ -54,7 +54,7 @@ class CastleReportParser:
         #checks if message is forwarded from cwreports channel and if it is actually a battle report and not guild report
         if "Battle reports:" in msg["text"] and msg["forward_from_chat"]["id"] == db.loadMetaData("cwReportID"):
             #checks if the report that was sent is newer than the report already stored
-            if db.loadMetaData("dateReport") <= msg["forward_date"]:   #remove the = in <= after testing
+            if db.loadMetaData("dateReport") < msg["forward_date"]:
                 return True
 
         return False

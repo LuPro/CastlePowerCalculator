@@ -16,7 +16,7 @@ class DataBaseHandler:
                 sqlParams += params[i]
 
                 if (type(values[i]) is int):
-                    query += values[i]
+                    query += str(values[i])
                 elif (isinstance(values[i], basestring)):
                     query += '"' + values[i] + '"'
                 else:
@@ -47,7 +47,7 @@ class DataBaseHandler:
         self.db.commit()
         return "Successfully updated data!" + output
 
-    def loadData(self, identifier, params):
+    def loadUserData(self, identifier, params):
         if (self.findUser(identifier).empty):
             return "Couldn't find any user with that TG ID or nick!"
 
@@ -128,8 +128,8 @@ class DataBaseHandler:
         self.dbCursor.execute("SELECT %s FROM metadata;" % (param))
         return self.dbCursor.fetchall()[0][0]
 
-    def loadCastles(self):
-        self.dbCursor.execute("SELECT castle FROM report;")
+    def loadList(self, param, table):
+        self.dbCursor.execute("SELECT %s FROM %s;" % (param, table))
         tupleResults = self.dbCursor.fetchall()
         results = []
         for result in tupleResults:

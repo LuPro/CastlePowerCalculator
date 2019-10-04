@@ -3,6 +3,7 @@ import random
 import datetime
 import telepot
 import emojis
+import copy
 from telepot.loop import MessageLoop
 
 import dbHandler
@@ -11,7 +12,6 @@ import castleReportParser
 atkEmoji = u'\U00002694'
 defEmoji = u'\U0001F6E1'
 goldEmoji = u'\U0001F4B0'
-trophyEmoji = u'\U0001F3C6'
 variationSelector = u'\uFE0F'
 
 def loadToken():
@@ -68,13 +68,13 @@ def editSettings(requestingID, command):
         elif parameter == 'loadsql':
             ID = command[2]
             param = command[3]
-            bot.sendMessage(requestingID, db.loadData(ID, [param]))
+            bot.sendMessage(requestingID, db.loadUserData(ID, [param]))
 
     else:
         bot.sendMessage(requestingID, "I'm sorry Dave, I'm afraid I can't do that.")
 
 def isCastle(string):
-    castles = db.loadCastles()
+    castles = db.loadList("castle", "report")
 
     for castle in castles:
         if castle == string:
@@ -88,17 +88,53 @@ def isCastle(string):
 
     return ""
 
-def pushCastleReport():
-    castles = db.loadCastles()
+def sortPoints(val):
+    return val[1]
+
+def generateCastleReport():
+    castles = db.loadList("castle", "report")
     
-    output = trophyEmoji + "<b>Scores</b>\nNormal:\n"
-    adjustedScores = "\nAdjusted:\n"
+    scoreText = emojis.encode(":trophy:") + "<b>Scores</b>\nNormal:\n"
+    adjustedText = "\nAdjusted:\n"
+    scores = []
+    adjustedScores = []
     for castle in castles:
-        points = db.loadCastleData(castle, "points")
-        output += db.loadCastleData(castle, "emoji") + ": +" + points + "\n"
-        adjustedScores += db.loadCastleData(castle, "emoji") + ": +" + (points * 5) + "-" + (((points + 1) * 5) - 1) + "\n"
+        points = db.loadCastleData(castle, "points")[0]
+        castleTuple = (castle, points)
+        scores.append(castleTuple)
+
+        if db.loadCastleData(castle, "battleResult")[0] == 1:
+            castleTuple = (castle, points * 5)
+            print castleTuple
+            adjustedScores.append(copy.deepcopy(castleTuple))
+        else:
+            castleTuple = (castle, points)
+            print castleTuple
+            adjustedScores.append(copy.deepcopy(castleTuple))
+        
+    scores.sort(key = sortPoints, reverse = True)
+    for score in scores:
+        scoreText += emojis.encode(":" + str(db.loadCastleData(score[0], "emoji")[0]) + ":") + ": +" + str(score[1]) + "\n"
+
+    adjustedScores.sort(key = sortPoints, reverse = True)
+    for score in adjustedScores:
+        if db.loadCastleData(score[0], "battleResult")[0] == 1:
+            adjustedText += emojis.encode(":" + str(db.loadCastleData(score[0], "emoji")[0]) + ":") + ": +" + str(score[1]) + "-" + str(score[1] + 4) + "\n"
+        else:
+            adjustedText += emojis.encode(":" + str(db.loadCastleData(score[0], "emoji")[0]) + ":") + ": +" + str(score[1]) + "\n"
     
-    return output + adjustedScores
+    return scoreText + adjustedText
+
+def pushCastleReport():
+    users = db.loadList("ID", "users")
+    subbedUsers = []
+    for user in users:
+        if db.loadUserData(user, ["subToReports"])[0][0] == 1:
+            subbedUsers.append(user)
+
+    castleReport = generateCastleReport()
+    for subbedUser in subbedUsers:
+        bot.sendMessage(subbedUser, castleReport, parse_mode="html")
 
 def parseReport(text, type, castleGold, chat_id):
     text = text.replace(variationSelector, '', 20)
@@ -199,7 +235,7 @@ def handle(msg):
         bot.sendMessage(chat_id, castleParser.parseReport(msg, db))
         pushCastleReport()
 
-    nick = db.loadData(chat_id, ["nick"])
+    nick = db.loadUserData(chat_id, ["nick"])
     print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], msg['chat']['username'], command)).encode('unicode-escape').decode('ascii')
 
     if (db.findUser(chat_id).empty):
@@ -213,6 +249,20 @@ def handle(msg):
 
         elif command[0:9] == '/settings':
             editSettings(chat_id, command.split())
+
+        elif command[0:4] == '/sub':
+            if db.loadUserData(chat_id, ["subToReports"])[0][0] == 0:
+                db.updateUserData(chat_id, ["subToReports"], [1])
+                bot.sendMessage(chat_id, "Successfully subscribed to castle point reports")
+            else:
+                bot.sendMessage(chat_id, "You are already subscribed to castle point reports")
+
+        elif command[0:6] == '/unsub':
+            if db.loadUserData(chat_id, ["subToReports"])[0][0] == 1:
+                db.updateUserData(chat_id, ["subToReports"], [0])
+                bot.sendMessage(chat_id, "Successfully unsubscribed from castle point reports")
+            else:
+                bot.sendMessage(chat_id, "You are not subscribed to castle point reports")
 
         elif (command[0:5] == '/calc'):
             parameters = command.split()
@@ -278,7 +328,7 @@ def handle(msg):
                 except ValueError:
                     bot.sendMessage(chat_id, "Error: Entered incorrect values (Did you enter text instead of numbers?)")
 
-                bot.sendMessage(chat_id, db.loadData(chat_id, ["msg"]).encode('utf-8'))
+                bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"]).encode('utf-8'))
 
                 if chat_id == 280993442:    #rinka
                     bot.sendMessage(chat_id, (u'\u0414\u043E\u0431\u0440\u044B\u0439 \u0434\u0435\u043D\u044C'.encode('utf-8') + ', Cat Queen! May your castle be strong and your Pina Colada tasty!'))
