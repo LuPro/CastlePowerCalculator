@@ -23,13 +23,13 @@ In the database you should also make an entry for you own account that includes 
 
 Then create entries for all castles (in the order they are in the cwreports channel report):
 
-<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Highnest", 0, 0, 0, 0, "None");</code>
-<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Wolfpack", 0, 0, 0, 0, "None");</code>
-<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Deerhorn", 0, 0, 0, 0, "None");</code>
-<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Sharkteeth", 0, 0, 0, 0, "None");</code>
-<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Dragonscale", 0, 0, 0, 0, "None");</code>
-<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Moonlight", 0, 0, 0, 0, "None");</code>
-<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Potato", 0, 0, 0, 0, "None");</code>
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Highnest", 0, 0, 0, 0, "None");<br>
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Wolfpack", 0, 0, 0, 0, "None");<br>
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Deerhorn", 0, 0, 0, 0, "None");<br>
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Sharkteeth", 0, 0, 0, 0, "None");<br>
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Dragonscale", 0, 0, 0, 0, "None");<br>
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Moonlight", 0, 0, 0, 0, "None");<br>
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Potato", 0, 0, 0, 0, "None");</code><br>
 
 * metadata 
 

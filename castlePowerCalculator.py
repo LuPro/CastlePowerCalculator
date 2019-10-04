@@ -11,6 +11,7 @@ import castleReportParser
 atkEmoji = u'\U00002694'
 defEmoji = u'\U0001F6E1'
 goldEmoji = u'\U0001F4B0'
+trophyEmoji = u'\U0001F3C6'
 variationSelector = u'\uFE0F'
 
 def loadToken():
@@ -86,7 +87,18 @@ def isCastle(string):
                     return castle
 
     return ""
-            
+
+def pushCastleReport():
+    castles = db.loadCastles()
+    
+    output = trophyEmoji + "<b>Scores</b>\nNormal:\n"
+    adjustedScores = "\nAdjusted:\n"
+    for castle in castles:
+        points = db.loadCastleData(castle, "points")
+        output += db.loadCastleData(castle, "emoji") + ": +" + points + "\n"
+        adjustedScores += db.loadCastleData(castle, "emoji") + ": +" + (points * 5) + "-" + (((points + 1) * 5) - 1) + "\n"
+    
+    return output + adjustedScores
 
 def parseReport(text, type, castleGold, chat_id):
     text = text.replace(variationSelector, '', 20)
@@ -185,6 +197,7 @@ def handle(msg):
 
     if castleParser.validate(msg, db):
         bot.sendMessage(chat_id, castleParser.parseReport(msg, db))
+        pushCastleReport()
 
     nick = db.loadData(chat_id, ["nick"])
     print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], msg['chat']['username'], command)).encode('unicode-escape').decode('ascii')
@@ -216,6 +229,9 @@ def handle(msg):
                         if isinstance(parameters[1], basestring):
                             castleName = isCastle(parameters[1])
                             if castleName != "":
+                                if db.loadCastleData(castleName, "battleResult")[0] == 0:
+                                    bot.sendMessage(chat_id, "This castle didn't get breached last battle, you cannot calculate attack power to it!")
+                                    return
                                 castleGold = int(db.loadCastleData(castleName, "gold")[0])
                             else:
                                 bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers or valid aliases for castle names")
@@ -234,6 +250,9 @@ def handle(msg):
                         if isinstance(parameters[1], basestring):
                             castleName = isCastle(parameters[1])
                             if castleName != "":
+                                if db.loadCastleData(castleName, "battleResult")[0] == 1:
+                                    bot.sendMessage(chat_id, "This castle got breached last battle, you cannot calculate defense power of it!")
+                                    return
                                 castleGold = int(db.loadCastleData(castleName, "gold")[0])
                             else:
                                 bot.sendMessage(chat_id, "Error: Value for castle gold is wrong, only enter numbers or valid aliases for castle names")
