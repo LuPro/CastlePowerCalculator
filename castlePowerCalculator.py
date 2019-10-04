@@ -239,7 +239,7 @@ def handle(msg):
         username = msg['chat']['username']
     except KeyError:
         username = "Group"
-    print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], msg['chat']['username'], command)).encode('unicode-escape').decode('ascii')
+    print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], username, command)).encode('unicode-escape').decode('ascii')
 
     if (db.findUser(chat_id).empty):
         bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
