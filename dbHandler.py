@@ -98,12 +98,11 @@ class DataBaseHandler:
 
     def findUser(self, identifier):
         result = pandas.DataFrame()
-        print "findUser: " + str(identifier)
         if type(identifier) is int:
             result = pandas.read_sql_query("SELECT ID FROM users WHERE ID = %d;" % (identifier), self.db)
         elif isinstance(identifier, basestring):
             result = pandas.read_sql_query("SELECT ID FROM users WHERE nick = \"%s\";" % (identifier), self.db)
-            print result
+
         return result
 
     def showUser(self, identifier = 0):
