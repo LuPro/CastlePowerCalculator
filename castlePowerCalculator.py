@@ -243,7 +243,7 @@ def handle(msg):
 
     if (db.findUser(chat_id).empty):
         pass
-        #bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
+        bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
     else:
         lowerCmd = command.lower()   #this makes it impossible to enter capitalized nicks and capitalization into custom messages, fix this later
         if (lowerCmd == '/start'):
