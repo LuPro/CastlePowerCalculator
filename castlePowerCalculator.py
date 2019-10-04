@@ -291,7 +291,8 @@ def handle(msg):
                                 return
 
                     parseReport(msg['reply_to_message']['text'], 'atk', castleGold, chat_id)
-                    bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
+                    if db.loadUserData(chat_id, ["msg"])[0][0] != "":
+                        bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
                     return
 
                 elif (command[5:9] == '_def' and msg['reply_to_message']['message_id']):
@@ -313,7 +314,8 @@ def handle(msg):
                                 return
 
                     parseReport(msg['reply_to_message']['text'], 'def', castleGold, chat_id)
-                    bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
+                    if db.loadUserData(chat_id, ["msg"])[0][0] != "":
+                        bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
                     return
                 
             except KeyError:
@@ -333,7 +335,8 @@ def handle(msg):
                 except ValueError:
                     bot.sendMessage(chat_id, "Error: Entered incorrect values (Did you enter text instead of numbers?)")
 
-            bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
+            if db.loadUserData(chat_id, ["msg"])[0][0] != "":
+                bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
 
             if chat_id == 280993442:    #rinka
                 bot.sendMessage(chat_id, (u'\u0414\u043E\u0431\u0440\u044B\u0439 \u0434\u0435\u043D\u044C'.encode('utf-8') + ', Cat Queen! May your castle be strong and your Pina Colada tasty!'))

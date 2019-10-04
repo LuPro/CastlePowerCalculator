@@ -23,13 +23,13 @@ In the database you should also make an entry for you own account that includes 
 
 Then create entries for all castles (in the order they are in the cwreports channel report):
 
-```INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Highnest", 0, 0, 0, 0, "None", eagle);
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Wolfpack", 0, 0, 0, 0, "None", wolf);
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Deerhorn", 0, 0, 0, 0, "None", deer);
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Sharkteeth", 0, 0, 0, 0, "None", shark);
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Dragonscale", 0, 0, 0, 0, "None", dragon);
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Moonlight", 0, 0, 0, 0, "None", new_moon);
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Potato", 0, 0, 0, 0, "None", potato);
+```INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Highnest", 0, 0, 0, 0, "None", "eagle");
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Wolfpack", 0, 0, 0, 0, "None", "wolf");
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Deerhorn", 0, 0, 0, 0, "None", "deer");
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Sharkteeth", 0, 0, 0, 0, "None", "shark");
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Dragonscale", 0, 0, 0, 0, "None", "dragon");
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Moonlight", 0, 0, 0, 0, "None", "new_moon");
+INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases, emoji) VALUES ("Potato", 0, 0, 0, 0, "None", "potato");
 ```
 
 * metadata 
