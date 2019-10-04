@@ -1,5 +1,11 @@
 # Set up
 
+### token file
+
+The bot needs a file called <code>token</code> containing *just* the bot token as shown in Botfather in the working directory
+
+### Database
+
 Create a new sqlite3 database with the name "calcBot.db"
 Then create 3 tables: users, report and metadata
 
