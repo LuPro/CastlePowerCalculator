@@ -240,39 +240,39 @@ def handle(msg):
     if (db.findUser(chat_id).empty):
         bot.sendMessage(chat_id, '<b>YOU HAVE NO POWER OVER ME</b>', parse_mode="html")
     else:
-        command = command.lower()   #this makes it impossible to enter capitalized nicks and capitalization into custom messages, fix this later
-        if (command == '/start'):
+        lowerCmd = command.lower()   #this makes it impossible to enter capitalized nicks and capitalization into custom messages, fix this later
+        if (lowerCmd == '/start'):
             bot.sendMessage(chat_id, 'Type /help to find out more')
 
-        elif (command[0:5] == '/help'):
+        elif (lowerCmd[0:5] == '/help'):
             bot.sendMessage(chat_id, 'To calculate send /calc <CastleGold> <RelevantStat> <Gold>')
 
-        elif command[0:9] == '/settings':
+        elif lowerCmd[0:9] == '/settings':
             editSettings(chat_id, command.split())
 
-        elif command[0:4] == '/sub':
+        elif lowerCmd[0:4] == '/sub':
             if db.loadUserData(chat_id, ["subToReports"])[0][0] == 0:
                 db.updateUserData(chat_id, ["subToReports"], [1])
                 bot.sendMessage(chat_id, "Successfully subscribed to castle point reports")
             else:
                 bot.sendMessage(chat_id, "You are already subscribed to castle point reports")
 
-        elif command[0:6] == '/unsub':
+        elif lowerCmd[0:6] == '/unsub':
             if db.loadUserData(chat_id, ["subToReports"])[0][0] == 1:
                 db.updateUserData(chat_id, ["subToReports"], [0])
                 bot.sendMessage(chat_id, "Successfully unsubscribed from castle point reports")
             else:
                 bot.sendMessage(chat_id, "You are not subscribed to castle point reports")
 
-        elif command[0:7] == '/report':
+        elif lowerCmd[0:7] == '/report':
             bot.sendMessage(chat_id, generateCastleReport(), parse_mode="html")
 
-        elif (command[0:5] == '/calc'):
+        elif (lowerCmd[0:5] == '/calc'):
             parameters = command.split()
             castleGold = 0
 
             try: 
-                if (command[5:9] == '_atk' and msg['reply_to_message']['message_id']):
+                if (lowerCmd[5:9] == '_atk' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
                         bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> or <CastleName>")
                     
@@ -295,7 +295,7 @@ def handle(msg):
                         bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
                     return
 
-                elif (command[5:9] == '_def' and msg['reply_to_message']['message_id']):
+                elif (lowerCmd[5:9] == '_def' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
                         bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> or <CastleName>")
 
@@ -324,6 +324,7 @@ def handle(msg):
                 
             if len(parameters) < 4:
                 bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> <RelevantStat> <Gold>")
+                return
 
             else:
                 if len(parameters) > 4:
@@ -334,6 +335,7 @@ def handle(msg):
 
                 except ValueError:
                     bot.sendMessage(chat_id, "Error: Entered incorrect values (Did you enter text instead of numbers?)")
+                    return
 
             if db.loadUserData(chat_id, ["msg"])[0][0] != "":
                 bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])

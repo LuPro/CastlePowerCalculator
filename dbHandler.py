@@ -97,7 +97,7 @@ class DataBaseHandler:
         return False
 
     def findUser(self, identifier):
-        result = None
+        result = pandas.DataFrame()
         if type(identifier) is int:
             result = pandas.read_sql_query("SELECT ID FROM users WHERE ID = %d;" % (identifier), self.db)
         elif isinstance(identifier, basestring):
