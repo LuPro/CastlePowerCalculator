@@ -5,31 +5,33 @@ Then create 3 tables: users, report and metadata
 
 * users
 
-CREATE TABLE users (ID INT, nick TEXT, msg TEXT, subToReports INT DEFAULT 0, admin INT DEFAULT 0);
+<code>CREATE TABLE users (ID INT, nick TEXT, msg TEXT, subToReports INT DEFAULT 0, admin INT DEFAULT 0);</code>
 
 In the database you should also make an entry for you own account that includes admin privileges so you can continue with adding users in the bot:
-INSERT INTO users (ID, nick, msg, subToReports, admin) VALUES (<your TG ID>, "<nickname you want>", "<custom msg you want>", <if you want to be subbed to reports (0 or 1)>, 1);
+
+<code>INSERT INTO users (ID, nick, msg, subToReports, admin) VALUES ($your_TG_ID, "$nickname_you_want", "$custom_msg_you_want", $if_you_want_to_be_subbed_to_reports (0 or 1), 1);</code>
 
 * report
 
-CREATE TABLE report (castle TEXT, battleResult INT, battleCloseness INT, gold INT, points INT, aliases TEXT);
+<code>CREATE TABLE report (castle TEXT, battleResult INT, battleCloseness INT, gold INT, points INT, aliases TEXT);</code>
 
 Then create entries for all castles (in the order they are in the cwreports channel report):
 
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Highnest", 0, 0, 0, 0, "None");
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Wolfpack", 0, 0, 0, 0, "None");
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Deerhorn", 0, 0, 0, 0, "None");
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Sharkteeth", 0, 0, 0, 0, "None");
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Dragonscale", 0, 0, 0, 0, "None");
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Moonlight", 0, 0, 0, 0, "None");
-INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Potato", 0, 0, 0, 0, "None");
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Highnest", 0, 0, 0, 0, "None");</code>
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Wolfpack", 0, 0, 0, 0, "None");</code>
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Deerhorn", 0, 0, 0, 0, "None");</code>
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Sharkteeth", 0, 0, 0, 0, "None");</code>
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Dragonscale", 0, 0, 0, 0, "None");</code>
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Moonlight", 0, 0, 0, 0, "None");</code>
+<code>INSERT INTO report (castle, battleResult, battleCloseness, gold, points, aliases) VALUES ("Potato", 0, 0, 0, 0, "None");</code>
 
 * metadata 
 
-CREATE TABLE metadata (dateReport INT, cwReportID INT);
+<code>CREATE TABLE metadata (dateReport INT, cwReportID INT);</code>
 
 Then enter the data, first should be set to 0 (unix time stamp), the second is the ID of the cw reports channel (can be adjusted to grab from other channels/cw3 channel) - parser is not guaranteed to work with other channels though (it will most likely not work)
-INSERT INTO metadata (dateReport, cwReportID) VALUES (0, -1001108112459);
+
+<code>INSERT INTO metadata (dateReport, cwReportID) VALUES (0, -1001108112459);</code>
 
 # Misc
 
