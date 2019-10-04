@@ -235,6 +235,10 @@ def handle(msg):
         pushCastleReport()
 
     nick = db.loadUserData(chat_id, ["nick"])
+    try:
+        username = msg['chat']['username']
+    except KeyError:
+        username = "Group"
     print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], msg['chat']['username'], command)).encode('unicode-escape').decode('ascii')
 
     if (db.findUser(chat_id).empty):
