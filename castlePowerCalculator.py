@@ -336,10 +336,19 @@ def handle(msg):
                     bot.sendMessage(chat_id, "Warning: Too many parameters defined, ignoring excess values")
 
                 try:
+                    int(parameters[1])
+                except:
+                    if isinstance(parameters[1], basestring):
+                        print parameters[1]
+                        castleName = isCastle(str(parameters[1]))
+                        if castleName != "":
+                            castleGold = int(db.loadCastleData(castleName, "gold")[0])
+                            parameters[1] = castleGold
+                try:
                     bot.sendMessage(chat_id, calculate(parameters), parse_mode="html")
 
                 except ValueError:
-                    bot.sendMessage(chat_id, "Error: Entered incorrect values (Did you enter text instead of numbers?)")
+                    bot.sendMessage(chat_id, "Error: Entered incorrect values (Did you enter text instead of numbers or the wrong alias for a castle?)")
                     return
 
             if db.loadUserData(chat_id, ["msg"])[0][0] != "":
