@@ -15,7 +15,7 @@ class DataBaseHandler:
                 query += params[i] + " = "
                 sqlParams += params[i]
 
-                if (type(values[i]) is int):
+                if (type(values[i]) is int or type(identifier is long):
                     query += str(values[i])
                 elif (isinstance(values[i], basestring)):
                     query += '"' + values[i] + '"'
@@ -30,7 +30,7 @@ class DataBaseHandler:
 
         sql = ""
         sqlSearch = ""
-        if type(identifier) is int:
+        if type(identifier) is int or type(identifier is long:
             sql = "UPDATE users SET %s WHERE ID = %d" % (query, identifier)
             sqlSearch = "SELECT %s FROM users WHERE ID = %d;" % (sqlParams, identifier)
         elif isinstance(identifier, basestring):
@@ -60,7 +60,7 @@ class DataBaseHandler:
         else:
             print "Error while reading SQL Data, list of search parameters is empty"
 
-        if type(identifier) is int:
+        if type(identifier) is int or type(identifier is long:
             sqlSearch = "SELECT %s FROM users WHERE ID = %d;" % (query, identifier)
         elif isinstance(identifier, basestring):
             sqlSearch = "SELECT %s FROM users WHERE nick = \"%s\";" % (query, identifier)
@@ -81,7 +81,7 @@ class DataBaseHandler:
         if (self.findUser(identifier).empty):
             return "Couldn't find any user with that TG ID or nick!"
 
-        if type(identifier) is int:
+        if type(identifier) is int or type(identifier is long:
             self.dbCursor.execute("DELETE FROM users WHERE ID = %d;" % (identifier))
         elif isinstance(identifier, basestring):
             self.dbCursor.execute("DELETE FROM users WHERE nick = \"%s\";" % (identifier))
@@ -98,7 +98,7 @@ class DataBaseHandler:
 
     def findUser(self, identifier):
         result = pandas.DataFrame()
-        if type(identifier) is int:
+        if type(identifier) is int or type(identifier is long:
             result = pandas.read_sql_query("SELECT ID FROM users WHERE ID = %d;" % (identifier), self.db)
         elif isinstance(identifier, basestring):
             result = pandas.read_sql_query("SELECT ID FROM users WHERE nick = \"%s\";" % (identifier), self.db)
@@ -106,7 +106,7 @@ class DataBaseHandler:
         return result
 
     def showUser(self, identifier = 0):
-        if (type(identifier) is int):
+        if (type(identifier) is int or type(identifier is long):
             if (identifier == 0):
                 output = "<code>" + str(pandas.read_sql_query("SELECT ID, nick, subToReports, admin FROM users;", self.db)) + "</code>"
                 return output
