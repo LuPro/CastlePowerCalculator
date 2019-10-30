@@ -19,17 +19,28 @@ class CastleReportParser:
             if castlePos != -1:
                 castleGoldPos = text.find("gold", castlePos)
 
-                attPillagedPos = text.find("Attackers have pillaged the castle for", castlePos, castleGoldPos)
-                attLostPos = text.find("Attackers have lost", castlePos, castleGoldPos)
-                if attPillagedPos != -1 and attLostPos == -1:
+                attPillagedStr = "Attackers have pillaged the castle for"
+                attPillagedPos = text.find(attPillagedStr, castlePos, castleGoldPos)
+                attLostStr = "Attackers have lost"
+                attLostPos = text.find(attLostStr, castlePos, castleGoldPos)
+                defBoredStr = "were bored - no one has attacked them."
+                defBoredPos = text.find(defBoredStr, castlePos, castleGoldPos)
+                print "check"
+                if defBoredPos != -1:
+                    print "bored"
+                    result = 0
+                    gold = 0
+                    castleGoldPos = defBoredPos + len(defBoredStr)  #isn't gold pos but is end of this castle's section
+                elif attPillagedPos != -1 and attLostPos == -1:
                     result = 1
-                    attPillagedPos += len("Attackers have pillaged the castle for")
+                    attPillagedPos += len(attPillagedStr)
                     gold = int(text[attPillagedPos + 1 : castleGoldPos - 1])
                 elif attPillagedPos == -1 and attLostPos != -1:
                     result = 0
-                    attLostPos += len("Attackers have lost")
-                    gold = int(text[attLostPos + 1 : castleGoldPos - 1])
+                    attLostPos += len(attLostStr)
+                    gold = int(text[attLostPos + 1 : castleGoldPos - 1]) 
                 else:
+                    result = 0
                     return "Error in parsing report, couldn't find out result of castle %s" % (castle)
 
             scoresPos = text.find("Scores:")
@@ -55,6 +66,8 @@ class CastleReportParser:
         if "Battle reports:" in msg["text"] and msg["forward_from_chat"]["id"] == db.loadMetaData("cwReportID"):
             #checks if the report that was sent is newer than the report already stored
             if db.loadMetaData("dateReport") < msg["forward_date"]:
-                return True
+                return "valid"
+            else:
+                return "old"
 
-        return False
+        return "invalid"

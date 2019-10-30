@@ -248,9 +248,12 @@ def handle(msg):
 
     db.open("calcBot.db")
 
-    if castleParser.validate(msg, db):
+    validationResult = castleParser.validate(msg, db)
+    if validationResult == "valid":
         bot.sendMessage(chat_id, castleParser.parseReport(msg, db))
         pushCastleReport()
+    elif validationResult == "old":
+        bot.sendMessage(chat_id, "Someone has already submitted this, or a newer Castle Report. This report will be ignored.")
 
     nick = db.loadUserData(chat_id, ["nick"])
     try:
