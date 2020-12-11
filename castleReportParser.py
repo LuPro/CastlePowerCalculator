@@ -25,9 +25,9 @@ class CastleReportParser:
                 attLostPos = text.find(attLostStr, castlePos, castleGoldPos)
                 defBoredStr = "were bored - no one has attacked them."
                 defBoredPos = text.find(defBoredStr, castlePos, castleGoldPos)
-                print "check"
+                print("check")
                 if defBoredPos != -1:
-                    print "bored"
+                    print("bored")
                     result = 0
                     gold = 0
                     castleGoldPos = defBoredPos + len(defBoredStr)  #isn't gold pos but is end of this castle's section

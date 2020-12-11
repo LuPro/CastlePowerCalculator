@@ -26,7 +26,7 @@ class DataBaseHandler:
                     query += ", "
                     sqlParams += ", "
         else:
-            print "Error while updating SQL Data, parameters and values are not of equal length (or of length 0)"
+            print("Error while updating SQL Data, parameters and values are not of equal length (or of length 0)")
 
         sql = ""
         sqlSearch = ""
@@ -58,7 +58,7 @@ class DataBaseHandler:
                 if i < (len(params) - 1):
                     query += ", "
         else:
-            print "Error while reading SQL Data, list of search parameters is empty"
+            print("Error while reading SQL Data, list of search parameters is empty")
 
         if type(identifier) is int or type(identifier) is long:
             sqlSearch = "SELECT %s FROM users WHERE ID = %d;" % (query, identifier)

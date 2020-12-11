@@ -82,7 +82,7 @@ def editSettings(requestingID, command):
             value = command[4]
             db.updateUserData(ID, [param], [value])
             bot.sendMessage(requestingID, "Updated database values!")
-        
+
         elif parameter == 'loadsql':
             ID = command[2]
             param = command[3]
@@ -112,7 +112,7 @@ def sortPoints(val):
 
 def generateCastleReport():
     castles = db.loadList("castle", "report")
-    
+
     scoreText = emojis.encode(":trophy:") + "<b>Scores</b>\nNormal:\n"
     adjustedText = "\nAdjusted:\n"
     scores = []
@@ -128,7 +128,7 @@ def generateCastleReport():
         else:
             castleTuple = (castle, points)
             adjustedScores.append(copy.deepcopy(castleTuple))
-        
+
     scores.sort(key = sortPoints, reverse = True)
     for score in scores:
         scoreText += emojis.encode(":" + str(db.loadCastleData(score[0], "emoji")[0]) + ":") + ": +" + str(score[1]) + "\n"
@@ -139,7 +139,7 @@ def generateCastleReport():
             adjustedText += emojis.encode(":" + str(db.loadCastleData(score[0], "emoji")[0]) + ":") + ": +" + str(score[1]) + "-" + str(score[1] + 4) + "\n"
         else:
             adjustedText += emojis.encode(":" + str(db.loadCastleData(score[0], "emoji")[0]) + ":") + ": +" + str(score[1]) + "\n"
-    
+
     return scoreText + adjustedText
 
 def pushCastleReport():
@@ -202,7 +202,7 @@ def parseReport(text, type, castleGold, chat_id):
         goldEndPos = newLinePos
     else:
         goldEndPos = whitespacePos
-    
+
     if newLinePos == -1 and whitespacePos == -1:
         goldEndPos = len(text)
 
@@ -215,7 +215,7 @@ def parseReport(text, type, castleGold, chat_id):
         return
 
     bot.sendMessage(chat_id, calculate([0, castleGold, stat, gold]), parse_mode="html")
-    return 
+    return
 
 def calculate(parameters):
     stat = 0
@@ -260,7 +260,7 @@ def handle(msg):
         username = msg['chat']['username']
     except KeyError:
         username = "Group"
-    print ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], username, command)).encode('unicode-escape').decode('ascii')
+    print( ('Received command from %d (%s / @%s): %s' % (chat_id, nick[0][0], username, command)).encode('unicode-escape').decode('ascii'))
 
     if (db.findUser(chat_id).empty):
         pass
@@ -297,15 +297,15 @@ def handle(msg):
             parameters = command.split()
             castleGold = 0
 
-            try: 
+            try:
                 if (lowerCmd[5:9] == '_atk' and msg['reply_to_message']['message_id']):
                     if len(parameters) < 2:
                         bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> or <CastleName>")
-                    
+
                     try:
                         castleGold = int(parameters[1])
                     except:
-                        if isinstance(parameters[1], basestring):
+                        if isinstance(parameters[1], str):
                             castleName = isCastle(parameters[1])
                             if castleName != "":
                                 if db.loadCastleData(castleName, "battleResult")[0] == 0:
@@ -328,7 +328,7 @@ def handle(msg):
                     try:
                         castleGold = int(parameters[1])
                     except:
-                        if isinstance(parameters[1], basestring):
+                        if isinstance(parameters[1], str):
                             castleName = isCastle(parameters[1])
                             if castleName != "":
                                 if db.loadCastleData(castleName, "battleResult")[0] == 1:
@@ -343,11 +343,11 @@ def handle(msg):
                     if db.loadUserData(chat_id, ["msg"])[0][0] != "":
                         bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
                     return
-                
+
             except KeyError:
                 bot.sendMessage(chat_id, "Error: You have to reply to a report for me to parse")
                 return
-                
+
             if len(parameters) < 4:
                 bot.sendMessage(chat_id, "Error: Too few parameters, needed are <CastleGold> <RelevantStat> <Gold>")
                 return
@@ -359,8 +359,8 @@ def handle(msg):
                 try:
                     int(parameters[1])
                 except:
-                    if isinstance(parameters[1], basestring):
-                        print parameters[1]
+                    if isinstance(parameters[1], str):
+                        print(parameters[1])
                         castleName = isCastle(str(parameters[1]))
                         if castleName != "":
                             castleGold = int(db.loadCastleData(castleName, "gold")[0])
@@ -375,14 +375,14 @@ def handle(msg):
             if db.loadUserData(chat_id, ["msg"])[0][0] != "":
                 bot.sendMessage(chat_id, db.loadUserData(chat_id, ["msg"])[0][0])
 
-            if chat_id == 280993442:    #rinka
-                bot.sendMessage(chat_id, (u'\u0414\u043E\u0431\u0440\u044B\u0439 \u0434\u0435\u043D\u044C'.encode('utf-8') + ', Cat Queen! May your castle be strong and your Pina Colada tasty!'))
-            elif chat_id == 26667968:    #arctic
-                a = random.randint(0,1)
-                if a == 0:
-                    bot.sendMessage(chat_id, 'hi do u rp')
-                elif a == 1:
-                    bot.sendMessage(chat_id, 'y u block my fren')
+            #if chat_id == 280993442:    #rinka
+            #    bot.sendMessage(chat_id, (u'\u0414\u043E\u0431\u0440\u044B\u0439 \u0434\u0435\u043D\u044C'.encode('utf-8') + ', Cat Queen! May your castle be strong and your Pina Colada tasty!'))
+            #elif chat_id == 26667968:    #arctic
+            #    a = random.randint(0,1)
+            #    if a == 0:
+            #        bot.sendMessage(chat_id, 'hi do u rp')
+            #    elif a == 1:
+            #        bot.sendMessage(chat_id, 'y u block my fren')
     db.close()
 
 
@@ -391,7 +391,7 @@ db = dbHandler.DataBaseHandler()
 castleParser = castleReportParser.CastleReportParser()
 
 MessageLoop(bot, handle).run_as_thread()
-print 'I am listening ...'
+print('I am listening ...')
 
 while 1:
     time.sleep(10)
