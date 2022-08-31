@@ -168,6 +168,9 @@ def parseReport(text, type, castleGold, chat_id):
     #print text.encode('unicode-escape').decode('ascii')
 
     statBeginPos = text.find(searchString)
+    if statBeginPos == -1:
+        bot.sendMessage(chat_id, "Error: Can't find the stat in question for the calculation")
+        return
     statEndPos = 0
     paranthesesPos = text.find('(', statBeginPos)
     whitespacePos = text.find(' ', statBeginPos)
