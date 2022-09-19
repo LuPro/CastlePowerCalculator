@@ -30,7 +30,7 @@ def loadToken():
     tokenFile.close()
     return token.rstrip()
 
-def runTest(chat_id)
+def runTest(chat_id):
     bot.sendMessage(chat_id, emojis.encode(":turtle:") + " " + command.decode())
 
 def editSettings(requestingID, command):
