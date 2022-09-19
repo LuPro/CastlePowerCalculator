@@ -30,6 +30,9 @@ def loadToken():
     tokenFile.close()
     return token.rstrip()
 
+def runTest(chat_id)
+    bot.sendMessage(chat_id, emojis.encode(":turtle:") + " " + command.decode())
+
 def editSettings(requestingID, command):
     if db.isAdmin(requestingID):
         parameter = command[1]
@@ -272,6 +275,9 @@ def handle(msg):
         lowerCmd = command.lower()   #this makes it impossible to enter capitalized nicks and capitalization into custom messages, fix this later
         if (lowerCmd == '/start'):
             bot.sendMessage(chat_id, 'Type /help to find out more')
+
+        if (lowerCmd[0:5] == '/test'):
+            runTest(chat_id, command)
 
         elif (lowerCmd[0:5] == '/help'):
             bot.sendMessage(chat_id, "To calculate send <b>/calc $CastleGold $RelevantStat $Gold</b>\nOR reply to a report with <b>/calc_atk</b> or <b>/calc_def $CastleGold</b>\nAlternatively to entering castle gold you can enter a castle name (or a valid alias) to use that castles' gold for calculations.\n<i>(Only works if this battles' report has been submitted already)</i>\n\n/sub to subscribe (and /unsub to unsubscribe) from automatic castle point report, /report to get a report sent manually.", parse_mode="html")
