@@ -31,7 +31,7 @@ def loadToken():
     return token.rstrip()
 
 def runTest(chat_id, command):
-    bot.sendMessage(chat_id, emojis.encode(":turtle:") + " " + command.decode())
+    bot.sendMessage(chat_id, "There is currently nothing to test :)")
 
 def editSettings(requestingID, command):
     if db.isAdmin(requestingID):
@@ -251,6 +251,8 @@ def calculate(parameters):
 
 def handle(msg):
     chat_id = msg['chat']['id']
+    if not ("text" in msg):
+        return
     command = msg['text']
 
     db.open("calcBot.db")
