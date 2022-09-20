@@ -3,6 +3,7 @@ trophyEmoji = u'\U0001F3C6'
 class CastleReportParser:
     def parseReport(self, msg, db):
         text = msg["text"]
+        returnErrors = ""
 
         castles = db.loadList("castle", "report")
 
@@ -25,9 +26,7 @@ class CastleReportParser:
                 attLostPos = text.find(attLostStr, castlePos, castleGoldPos)
                 defBoredStr = "were bored - no one has attacked them."
                 defBoredPos = text.find(defBoredStr, castlePos, castleGoldPos)
-                print("check")
                 if defBoredPos != -1:
-                    print("bored")
                     result = 0
                     gold = 0
                     castleGoldPos = defBoredPos + len(defBoredStr)  #isn't gold pos but is end of this castle's section
@@ -41,7 +40,8 @@ class CastleReportParser:
                     gold = int(text[attLostPos + 1 : castleGoldPos - 1]) 
                 else:
                     result = 0
-                    return "Error in parsing report, couldn't find out result of castle %s" % (castle)
+                    returnErrors += "\nError in parsing report, couldn't find out result of castle %s" % (castle)
+
 
             scoresPos = text.find("Scores:")
             if scoresPos != -1:
@@ -53,17 +53,17 @@ class CastleReportParser:
                 if trophyEndPos != -1:
                     points = int(text[castleScorePos + 2 : trophyEndPos - 1])
                 else:
-                    return "Error while searching for trophy emoji to parse castle points for castle %s" % (castle)
+                    returnErrors += "\nError while searching for trophy emoji to parse castle points for castle %s" % (castle)
 
             db.updateCastleData(castle, result, closeness, gold, points)
             castleEndPos = castleGoldPos
             
         db.updateReportTimeStamp(msg["forward_date"])
-        return "Thank you for sending in the report"
+        return "Thank you for sending in the report" + returnErrors
 
     def validate(self, msg, db):
         #checks if message is forwarded from cwreports channel and if it is actually a battle report and not guild report
-        if "Battle reports:" in msg["text"] and msg["forward_from_chat"]["id"] == db.loadMetaData("cwReportID"):
+        if "Battle reports:" in msg["text"] and "forward_from_chat" in msg and msg["forward_from_chat"]["id"] == db.loadMetaData("cwReportID"):
             #checks if the report that was sent is newer than the report already stored
             if db.loadMetaData("dateReport") < msg["forward_date"]:
                 return "valid"

@@ -143,7 +143,8 @@ def generateCastleReport():
         else:
             adjustedText += emojis.encode(":" + str(db.loadCastleData(score[0], "emoji")[0]) + ":") + ": +" + str(score[1]) + "\n"
 
-    return scoreText + adjustedText
+    return scoreText #+ adjustedText
+    #removed the adjusted scores as they aren't accurate anymore. Consider removing outright
 
 def pushCastleReport():
     users = db.loadList("ID", "users")
